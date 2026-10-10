@@ -16,13 +16,14 @@
 
 The official **$QCash** token is on Solana. It was created on pump.fun by the project wallet.
 
-| | |
-| --- | --- |
-| Contract | `BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump` |
-| pump.fun | [pump.fun/coin/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump](https://pump.fun/coin/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump) |
-| DexScreener | [dexscreener.com/solana/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump](https://dexscreener.com/solana/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump) |
+```
+BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump
+```
 
-QCASH mined by `qcash node` has no value. It is not this Solana token, and the node does not issue, bridge, or redeem that mint. The software is experimental and has not been audited.
+- [pump.fun](https://pump.fun/coin/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump)
+- [DexScreener](https://dexscreener.com/solana/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump)
+
+QCASH mined by `qcash node` has no value and is separate from the $QCash Solana token. The node does not issue, bridge, or redeem that mint. The software is experimental and has not been audited.
 
 QuantumCash (written **$QCash**, ticker **QCASH**) is a readable chain you run on your own computer. It borrows three ideas and implements them in a few Go packages. It does not contain Bitcoin Core or a Solana validator, and it does not speak to either network.
 
@@ -190,7 +191,7 @@ This is a single-process devnet. Read [docs/limitations.md](docs/limitations.md)
 
 - No peer-to-peer network, no fork choice, and no reorg handling. One process extends its own tip.
 - Devnet proof-of-work is 16 bits by default. Anyone who can reach the process can outwork it. Tests use 8 bits.
-- Devnet QCASH mined by the node has no value and is not the Solana $QCash token. The software is experimental and has not been audited.
+- Devnet QCASH mined by the node has no value and is separate from the Solana $QCash token. The software is experimental and has not been audited.
 - The signature code is a teaching W-OTS. It is not a standardized parameter set.
 - Wallet files are plaintext JSON, mode `0600`. The HTTP API does not authenticate callers.
 - Transaction ids and block hashes commit to Go's `encoding/json` output. A port to another language has to match that encoding.
