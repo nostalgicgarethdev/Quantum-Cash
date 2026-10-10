@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QuantumCash · $QCash experimental testnet</title>
+<meta name="description" content="QuantumCash: Bitcoin-style UTXOs + Solana-style Proof-of-History + post-quantum signatures. Experimental testnet, not money.">
+<style>
+:root{--g:#39ff88;--d:#0a0f0c;--m:#7da38c;--a:#ffcc33}
+*{box-sizing:border-box}body{margin:0;background:var(--d);color:#d8ffe6;font:18px/1.5 ui-monospace,Menlo,Consolas,monospace}
+.w{max-width:980px;margin:auto;padding:24px}
+h1{font-size:44px;margin:.2em 0;color:var(--g);letter-spacing:2px}h2{color:var(--g);font-size:22px;border-bottom:1px solid #1d3326;padding-bottom:6px;margin-top:40px}
+.warn{border:2px solid var(--a);color:var(--a);padding:12px 16px;border-radius:6px;font-weight:bold}
+pre,.box{background:#050806;border:1px solid #1d3326;border-radius:6px;padding:14px;overflow:auto;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.card{border:1px solid #1d3326;border-radius:6px;padding:14px;background:#07100a}.card b{color:var(--g)}
+button,input{font:inherit;background:#07100a;color:var(--g);border:1px solid var(--g);border-radius:4px;padding:8px 14px}
+button{cursor:pointer}button:hover{background:var(--g);color:#000}
+.m{color:var(--m)}a{color:var(--g)}table{width:100%;border-collapse:collapse;font-size:14px}td,th{border-bottom:1px solid #1d3326;padding:6px;text-align:left}
+#poh{height:220px;white-space:pre;font-size:13px}
+</style></head><body><div class="w">
+<pre style="border:0;background:none;color:var(--g);font-size:12px">
+ ██████  ██    ██  █████  ███    ██ ████████ ██    ██ ███    ███  ██████  █████  ███████ ██   ██
+██    ██ ██    ██ ██   ██ ████   ██    ██    ██    ██ ████  ████ ██      ██   ██ ██      ██   ██
+██ ▄▄ ██ ██    ██ ███████ ██ ██  ██    ██    ██    ██ ██ ████ ██ ██      ███████ ███████ ███████
+ ██████   ██████  ██   ██ ██   ████    ██     ██████  ██      ██  ██████ ██   ██      ██ ██   ██
+    ▀▀</pre>
+<h1>$QCash</h1>
+<p>A tiny blockchain that mixes <b>Bitcoin</b>, <b>Solana</b> and <b>post-quantum signatures</b>. Run it on your own computer.</p>
+<p class="warn">⚠ Experimental testnet. Not money. No token, no sale, no CA.</p>
+
+<h2>&gt; what it is</h2>
+<div class="grid">
+<div class="card"><b>Bitcoin part</b><br>Coins live in UTXOs. Blocks are sealed with SHA-256 proof-of-work. 50 QCASH reward, halves every 210,000 blocks.</div>
+<div class="card"><b>Solana part</b><br>Time is cut into slots. A Proof-of-History hash chain (12,500 SHA-256 steps per slot) proves the order of every transaction.</div>
+<div class="card"><b>Quantum-safe part</b><br>Every spend is signed with W-OTS, a hash-only signature. No elliptic curves for a quantum computer to break.</div>
+</div>
+
+<h2>&gt; watch proof-of-history tick (in your browser)</h2>
+<p class="m">This runs real sequential SHA-256 right here. Each line is one slot = 12,500 hashes.</p>
+<button id="go">▶ start clock</button>
+<div id="poh" class="box"></div>
+
+<h2>&gt; run a node in 4 steps</h2>
+<pre>git clone https://github.com/nostalgicgarethdev/Quantum-Cash
+cd Quantum-Cash && go build -o qcash ./cmd/qcash
+./qcash wallet new -w me.json
+./qcash node -miner $(./qcash wallet address -w me.json)</pre>
+<p class="m">Then send coins: <code>./qcash wallet send &lt;address&gt; 12.5 -w me.json</code></p>
+
+<h2>&gt; explorer</h2>
+<p class="m">Connect to your own node (default is your computer).</p>
+<input id="url" value="http://localhost:8545" size="28"> <button id="con">connect</button>
+<div id="st" class="box" style="margin-top:12px">not connected</div>
+<table id="bl"></table>
+
+<h2>&gt; honest limits</h2>
+<ul class="m"><li>One node only. No peer-to-peer network yet.</li><li>Tiny difficulty. Anyone can rewrite a devnet.</li><li>Not audited. Built as an experiment.</li><li>QCASH has no value. If anyone sells it, it's not this.</li></ul>
+<p class="m">Code + whitepaper: <a href="https://github.com/nostalgicgarethdev/Quantum-Cash">github.com/nostalgicgarethdev/Quantum-Cash</a></p>
+</div>
+<script>
+const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+let run=false,slot=0,lines=[];
+document.getElementById('go').onclick=async e=>{run=!run;e.target.textContent=run?'■ stop clock':'▶ start clock';
+ let x=new TextEncoder().encode('QuantumCash genesis');while(run){const t=performance.now();
+ for(let i=0;i<12500;i++)x=await crypto.subtle.digest('SHA-256',x);
+ lines.unshift(`slot ${String(slot++).padStart(4)}  ${hex(x).slice(0,48)}…  ${(performance.now()-t|0)}ms`);
+ lines=lines.slice(0,10);document.getElementById('poh').textContent=lines.join('\n');}};
+let timer;document.getElementById('con').onclick=()=>{clearInterval(timer);const u=document.getElementById('url').value.replace(/\/$/,'');
+ const f=async()=>{try{const s=await (await fetch(u+'/stats')).json();
+ document.getElementById('st').textContent=`height ${s.height}  supply ${(s.supply/1e8).toFixed(2)} QCASH  utxos ${s.utxos}  mempool ${s.mempool}  poh ticks ${s.poh_ticks}`;
+ const b=await (await fetch(u+'/blocks?n=10')).json();
+ document.getElementById('bl').innerHTML='<tr><th>height</th><th>slot</th><th>txs</th><th>poh</th></tr>'+b.map(x=>`<tr><td>${x.header.height}</td><td>${x.header.slot}</td><td>${x.txs.length}</td><td>${x.header.poh.slice(0,20)}…</td></tr>`).join('');
+ }catch(e){document.getElementById('st').textContent='cannot reach node at '+u+' (is it running?)'}};f();timer=setInterval(f,2000)};
+</script></body></html>
