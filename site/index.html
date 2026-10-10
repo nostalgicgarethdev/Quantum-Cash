@@ -1,71 +1,335 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>QuantumCash · $QCash experimental testnet</title>
-<meta name="description" content="QuantumCash: Bitcoin-style UTXOs + Solana-style Proof-of-History + post-quantum signatures. Experimental testnet, not money.">
+<meta name="description" content="QuantumCash is an experimental testnet: a Bitcoin-style UTXO ledger, a small proof-of-history clock, and W-OTS-style signatures. Not money.">
+<meta name="theme-color" content="#07090d">
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
 <style>
-:root{--g:#39ff88;--d:#0a0f0c;--m:#7da38c;--a:#ffcc33}
-*{box-sizing:border-box}body{margin:0;background:var(--d);color:#d8ffe6;font:18px/1.5 ui-monospace,Menlo,Consolas,monospace}
-.w{max-width:980px;margin:auto;padding:24px}
-h1{font-size:44px;margin:.2em 0;color:var(--g);letter-spacing:2px}h2{color:var(--g);font-size:22px;border-bottom:1px solid #1d3326;padding-bottom:6px;margin-top:40px}
-.warn{border:2px solid var(--a);color:var(--a);padding:12px 16px;border-radius:6px;font-weight:bold}
-pre,.box{background:#050806;border:1px solid #1d3326;border-radius:6px;padding:14px;overflow:auto;font-size:15px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-.card{border:1px solid #1d3326;border-radius:6px;padding:14px;background:#07100a}.card b{color:var(--g)}
-button,input{font:inherit;background:#07100a;color:var(--g);border:1px solid var(--g);border-radius:4px;padding:8px 14px}
-button{cursor:pointer}button:hover{background:var(--g);color:#000}
-.m{color:var(--m)}a{color:var(--g)}table{width:100%;border-collapse:collapse;font-size:14px}td,th{border-bottom:1px solid #1d3326;padding:6px;text-align:left}
-#poh{height:220px;white-space:pre;font-size:13px}
-</style></head><body><div class="w">
-<pre style="border:0;background:none;color:var(--g);font-size:12px">
- ██████  ██    ██  █████  ███    ██ ████████ ██    ██ ███    ███  ██████  █████  ███████ ██   ██
-██    ██ ██    ██ ██   ██ ████   ██    ██    ██    ██ ████  ████ ██      ██   ██ ██      ██   ██
-██ ▄▄ ██ ██    ██ ███████ ██ ██  ██    ██    ██    ██ ██ ████ ██ ██      ███████ ███████ ███████
- ██████   ██████  ██   ██ ██   ████    ██     ██████  ██      ██  ██████ ██   ██      ██ ██   ██
-    ▀▀</pre>
-<h1>$QCash</h1>
-<p>A tiny blockchain that mixes <b>Bitcoin</b>, <b>Solana</b> and <b>post-quantum signatures</b>. Run it on your own computer.</p>
-<p class="warn">⚠ Experimental testnet. Not money. No token, no sale, no CA.</p>
+:root {
+  --bg: #07090d;
+  --panel: #10141c;
+  --panel-2: #161b26;
+  --line: #243044;
+  --text: #e7eef8;
+  --muted: #93a0b8;
+  --mint: #3ee0a0;
+  --mint-dim: rgba(62, 224, 160, .14);
+  --violet: #9b8cff;
+  --amber: #ffcc66;
+  --amber-bg: #2a220f;
+  --danger: #ff8b7b;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background:
+    radial-gradient(900px 480px at 0% -10%, rgba(155, 140, 255, .16), transparent 55%),
+    radial-gradient(800px 420px at 100% 0%, rgba(62, 224, 160, .10), transparent 50%),
+    var(--bg);
+  color: var(--text);
+  font: 17px/1.55 Inter, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+code, pre, .mono, .kicker, button, input {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+a { color: var(--mint); }
+a:hover { color: #e7fff5; }
+.notice {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--amber-bg);
+  color: var(--amber);
+  text-align: center;
+  padding: 10px 16px;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255, 204, 102, .55);
+  letter-spacing: .01em;
+}
+.wrap { max-width: 1040px; margin: 0 auto; padding: 28px 22px 72px; }
+header.bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+header.bar img { width: 64px; height: 64px; border-radius: 16px; }
+.brand { display: flex; flex-direction: column; line-height: 1.2; }
+.brand strong { font-size: 18px; letter-spacing: .04em; }
+.kicker { color: var(--mint); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+header.bar .src { margin-left: auto; color: var(--muted); text-decoration: none; font-size: 14px; }
+header.bar .src:hover { color: var(--mint); }
+h1 { font-size: 52px; line-height: 1.05; margin: 0 0 12px; letter-spacing: -0.03em; }
+.lede { font-size: 20px; color: #c5d0e0; max-width: 46rem; margin: 0 0 28px; }
+h2 { font-size: 22px; margin: 48px 0 12px; letter-spacing: -.01em; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.card {
+  background: linear-gradient(180deg, rgba(155, 140, 255, .05), transparent 40%), var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 16px 14px;
+}
+.card b { display: block; color: var(--mint); margin-bottom: 6px; font-size: 15px; letter-spacing: .04em; text-transform: uppercase; }
+.card p { margin: 0; color: var(--muted); }
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+}
+pre {
+  margin: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #d5deea;
+}
+.panel { min-width: 0; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+button, input {
+  background: #0c1018;
+  color: var(--mint);
+  border: 1px solid var(--mint);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 14px;
+}
+input { color: var(--text); min-width: min(100%, 280px); }
+button { cursor: pointer; font-weight: 700; }
+button:hover { background: var(--mint); color: #04140e; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+#poh, #st {
+  overflow-wrap: anywhere;
+}
+#poh {
+  margin-top: 12px;
+  min-height: 180px;
+  white-space: pre-wrap;
+  color: var(--mint);
+  font-size: 13px;
+}
+.muted { color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 12px; }
+th, td { border-bottom: 1px solid var(--line); padding: 8px 6px; text-align: left; vertical-align: top; }
+th { color: var(--muted); font-weight: 600; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 12px; }
+.stat { background: var(--panel-2); border-radius: 10px; padding: 10px 12px; }
+.stat span { display: block; color: var(--muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+.stat strong { font-size: 16px; font-weight: 650; word-break: break-all; }
+ul { padding-left: 1.1em; }
+li { margin: 6px 0; color: var(--muted); }
+footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
+@media (max-width: 720px) {
+  h1 { font-size: 36px; }
+  header.bar .src { display: none; }
+  #poh { white-space: pre-wrap; }
+}
+</style>
+</head>
+<body>
+<div class="notice">Experimental testnet. Not money. No sale, no token, no contract address.</div>
+<div class="wrap">
+  <header class="bar">
+    <img src="../assets/logo.svg" width="64" height="64" alt="QuantumCash logo">
+    <div class="brand">
+      <span class="kicker">$QCash · ticker QCASH</span>
+      <strong>QuantumCash</strong>
+    </div>
+    <a class="src" href="https://github.com/nostalgicgarethdev/Quantum-Cash">github.com/nostalgicgarethdev/Quantum-Cash</a>
+  </header>
 
-<h2>&gt; what it is</h2>
-<div class="grid">
-<div class="card"><b>Bitcoin part</b><br>Coins live in UTXOs. Blocks are sealed with SHA-256 proof-of-work. 50 QCASH reward, halves every 210,000 blocks.</div>
-<div class="card"><b>Solana part</b><br>Time is cut into slots. A Proof-of-History hash chain (12,500 SHA-256 steps per slot) proves the order of every transaction.</div>
-<div class="card"><b>Quantum-safe part</b><br>Every spend is signed with W-OTS, a hash-only signature. No elliptic curves for a quantum computer to break.</div>
-</div>
+  <h1>A devnet you can read.</h1>
+  <p class="lede">Bitcoin-style UTXOs, a 12,500-tick proof-of-history slot, and a W-OTS-style signature on every spend. One Go process. Nothing here is a public network.</p>
 
-<h2>&gt; watch proof-of-history tick (in your browser)</h2>
-<p class="m">This runs real sequential SHA-256 right here. Each line is one slot = 12,500 hashes.</p>
-<button id="go">▶ start clock</button>
-<div id="poh" class="box"></div>
+  <div class="grid">
+    <article class="card"><b>UTXO ledger</b><p>Coins live in unspent outputs. A spend reveals a 2,144-byte public key and a signature. Inputs must cover outputs.</p></article>
+    <article class="card"><b>Proof-of-History</b><p>Each slot is a sequential SHA-256 chain. Transaction ids are mixed in at fixed ticks. Verifiers replay it. This is not Solana's validator.</p></article>
+    <article class="card"><b>Hash-based signatures</b><p>The signature code is a teaching W-OTS over SHA-256, w=16. It is not SLH-DSA, ML-DSA, or RFC 8391 WOTS+. Each key signs once.</p></article>
+  </div>
 
-<h2>&gt; run a node in 4 steps</h2>
-<pre>git clone https://github.com/nostalgicgarethdev/Quantum-Cash
-cd Quantum-Cash && go build -o qcash ./cmd/qcash
-./qcash wallet new -w me.json
-./qcash node -miner $(./qcash wallet address -w me.json)</pre>
-<p class="m">Then send coins: <code>./qcash wallet send &lt;address&gt; 12.5 -w me.json</code></p>
+  <h2 id="clock">Watch 12,500 hashes</h2>
+  <p class="muted">This button runs SHA-256 in your browser. It does not talk to a node and it does not extend a chain file. Each line is one slot.</p>
+  <div class="panel">
+    <button type="button" id="go">Start clock</button>
+    <div id="poh" class="mono" role="log" aria-live="polite">clock idle</div>
+  </div>
 
-<h2>&gt; explorer</h2>
-<p class="m">Connect to your own node (default is your computer).</p>
-<input id="url" value="http://localhost:8545" size="28"> <button id="con">connect</button>
-<div id="st" class="box" style="margin-top:12px">not connected</div>
-<table id="bl"></table>
+  <h2 id="run">Run a node</h2>
+  <div class="panel">
+    <pre>git clone https://github.com/nostalgicgarethdev/Quantum-Cash.git
+cd Quantum-Cash
+go build -o qcash ./cmd/qcash
+./qcash wallet new -w alice.json
+MINER=$(./qcash wallet address -w alice.json)
+./qcash node -addr 127.0.0.1:8545 -miner "$MINER"</pre>
+  </div>
+  <p class="muted">In a second terminal: <code>./qcash wallet send &lt;address&gt; 12.5 -w alice.json -memo gm</code>. The default bind without <code>-addr</code> is every interface. Prefer localhost.</p>
 
-<h2>&gt; honest limits</h2>
-<ul class="m"><li>One node only. No peer-to-peer network yet.</li><li>Tiny difficulty. Anyone can rewrite a devnet.</li><li>Not audited. Built as an experiment.</li><li>QCASH has no value. If anyone sells it, it's not this.</li></ul>
-<p class="m">Code + whitepaper: <a href="https://github.com/nostalgicgarethdev/Quantum-Cash">github.com/nostalgicgarethdev/Quantum-Cash</a></p>
+  <h2 id="explorer">Explorer</h2>
+  <p class="muted">Poll a node you started. Values are quanta divided by 1e8 for display. An empty tip means the process has not mined a block yet.</p>
+  <div class="panel">
+    <form class="row" id="connect-form">
+      <label for="url" class="muted">Node</label>
+      <input id="url" value="http://localhost:8545" spellcheck="false" autocomplete="off">
+      <button type="submit" id="con">Connect</button>
+      <button type="button" id="stop" hidden>Stop</button>
+    </form>
+    <div class="stats" id="stats" hidden>
+      <div class="stat"><span>Height</span><strong id="s-height">—</strong></div>
+      <div class="stat"><span>Supply</span><strong id="s-supply">—</strong></div>
+      <div class="stat"><span>UTXOs</span><strong id="s-utxos">—</strong></div>
+      <div class="stat"><span>Mempool</span><strong id="s-mempool">—</strong></div>
+      <div class="stat"><span>PoH ticks</span><strong id="s-poh">—</strong></div>
+      <div class="stat"><span>Bits</span><strong id="s-bits">—</strong></div>
+    </div>
+    <p id="st" class="mono muted">Not connected.</p>
+    <div style="overflow-x:auto">
+      <table id="bl"></table>
+    </div>
+  </div>
+
+  <h2 id="limits">Honest limits</h2>
+  <ul>
+    <li>One node. No peers, no fork choice, no reorgs.</li>
+    <li>Toy proof-of-work. The devnet default is 16 leading zero bits.</li>
+    <li>Teaching-grade signatures, unaudited. A key that signs twice can leak.</li>
+    <li>QCASH has no value. A seller of QCASH is not this project. An old Waves token reused the ticker. This repository is not that token.</li>
+  </ul>
+
+  <footer>
+    <p>Code and whitepaper: <a href="https://github.com/nostalgicgarethdev/Quantum-Cash">github.com/nostalgicgarethdev/Quantum-Cash</a> · <a href="../WHITEPAPER.md">WHITEPAPER.md</a> · <a href="../docs/limitations.md">limitations</a></p>
+    <p>MIT license. Experimental testnet. Not money.</p>
+  </footer>
 </div>
 <script>
-const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
-let run=false,slot=0,lines=[];
-document.getElementById('go').onclick=async e=>{run=!run;e.target.textContent=run?'■ stop clock':'▶ start clock';
- let x=new TextEncoder().encode('QuantumCash genesis');while(run){const t=performance.now();
- for(let i=0;i<12500;i++)x=await crypto.subtle.digest('SHA-256',x);
- lines.unshift(`slot ${String(slot++).padStart(4)}  ${hex(x).slice(0,48)}…  ${(performance.now()-t|0)}ms`);
- lines=lines.slice(0,10);document.getElementById('poh').textContent=lines.join('\n');}};
-let timer;document.getElementById('con').onclick=()=>{clearInterval(timer);const u=document.getElementById('url').value.replace(/\/$/,'');
- const f=async()=>{try{const s=await (await fetch(u+'/stats')).json();
- document.getElementById('st').textContent=`height ${s.height}  supply ${(s.supply/1e8).toFixed(2)} QCASH  utxos ${s.utxos}  mempool ${s.mempool}  poh ticks ${s.poh_ticks}`;
- const b=await (await fetch(u+'/blocks?n=10')).json();
- document.getElementById('bl').innerHTML='<tr><th>height</th><th>slot</th><th>txs</th><th>poh</th></tr>'+b.map(x=>`<tr><td>${x.header.height}</td><td>${x.header.slot}</td><td>${x.txs.length}</td><td>${x.header.poh.slice(0,20)}…</td></tr>`).join('');
- }catch(e){document.getElementById('st').textContent='cannot reach node at '+u+' (is it running?)'}};f();timer=setInterval(f,2000)};
-</script></body></html>
+const hex = (buf) => [...new Uint8Array(buf)].map((x) => x.toString(16).padStart(2, "0")).join("");
+const qcash = (quanta) => {
+  const n = Number(quanta);
+  const whole = Math.floor(n / 1e8);
+  const frac = String(Math.round(n % 1e8)).padStart(8, "0");
+  return whole + "." + frac + " QCASH";
+};
+
+const clockBtn = document.getElementById("go");
+const pohEl = document.getElementById("poh");
+let run = false;
+let pumping = false;
+let slot = 0;
+async function hashSlot(state) {
+  const total = 12500;
+  const chunk = 250;
+  for (let done = 0; done < total; done += chunk) {
+    const n = Math.min(chunk, total - done);
+    for (let j = 0; j < n; j++) state = await crypto.subtle.digest("SHA-256", state);
+    // Let the stop button and the rest of the page run between batches.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    if (!run) return null;
+  }
+  return state;
+}
+
+clockBtn.addEventListener("click", async () => {
+  run = !run;
+  clockBtn.textContent = run ? "Stop clock" : "Start clock";
+  if (!run || pumping) return;
+  pumping = true;
+  let state = new TextEncoder().encode("QuantumCash genesis");
+  const lines = [];
+  while (run) {
+    const t = performance.now();
+    pohEl.textContent = (lines.slice(0, 7).join("\n") + (lines.length ? "\n" : "") + "hashing slot " + slot + "…").trim();
+    const next = await hashSlot(state);
+    if (!next) break;
+    state = next;
+    lines.unshift("slot " + String(slot).padStart(4, " ") + "  " + hex(state).slice(0, 48) + "…  " + ((performance.now() - t) | 0) + "ms");
+    slot += 1;
+    pohEl.textContent = lines.slice(0, 8).join("\n");
+  }
+  pumping = false;
+  if (!lines.length) pohEl.textContent = "clock idle";
+});
+
+const statsEl = document.getElementById("stats");
+const statusEl = document.getElementById("st");
+const table = document.getElementById("bl");
+const stopBtn = document.getElementById("stop");
+let timer = 0;
+
+function cell(tag, text) {
+  const el = document.createElement(tag);
+  el.textContent = text;
+  return el;
+}
+
+function renderBlocks(blocks) {
+  table.replaceChildren();
+  const head = document.createElement("tr");
+  ["height", "slot", "txs", "poh"].forEach((name) => head.appendChild(cell("th", name)));
+  table.appendChild(head);
+  if (!Array.isArray(blocks) || blocks.length === 0) {
+    const tr = document.createElement("tr");
+    const td = cell("td", "no blocks yet");
+    td.colSpan = 4;
+    tr.appendChild(td);
+    table.appendChild(tr);
+    return;
+  }
+  for (const block of blocks) {
+    const header = block.header || {};
+    const poh = String(header.poh || "");
+    const tr = document.createElement("tr");
+    tr.appendChild(cell("td", String(header.height ?? "")));
+    tr.appendChild(cell("td", String(header.slot ?? "")));
+    tr.appendChild(cell("td", String((block.txs || []).length)));
+    tr.appendChild(cell("td", poh ? poh.slice(0, 24) + "…" : ""));
+    table.appendChild(tr);
+  }
+}
+
+async function poll() {
+  const base = document.getElementById("url").value.replace(/\/$/, "");
+  try {
+    const statsRes = await fetch(base + "/stats");
+    if (!statsRes.ok) throw new Error("HTTP " + statsRes.status);
+    const stats = await statsRes.json();
+    statsEl.hidden = false;
+    const started = Boolean(stats.tip);
+    document.getElementById("s-height").textContent = started ? String(stats.height) : "none";
+    document.getElementById("s-supply").textContent = qcash(stats.supply || 0);
+    document.getElementById("s-utxos").textContent = String(stats.utxos ?? 0);
+    document.getElementById("s-mempool").textContent = String(stats.mempool ?? 0);
+    document.getElementById("s-poh").textContent = String(stats.poh_ticks ?? 0);
+    document.getElementById("s-bits").textContent = String(stats.bits ?? "");
+    statusEl.textContent = started ? "tip " + stats.tip : "node is up, no blocks yet";
+    const blocksRes = await fetch(base + "/blocks?n=10");
+    if (!blocksRes.ok) throw new Error("HTTP " + blocksRes.status);
+    renderBlocks(await blocksRes.json());
+  } catch (err) {
+    statsEl.hidden = true;
+    table.replaceChildren();
+    statusEl.textContent = "cannot reach " + base + " (" + err.message + "). Is qcash node running?";
+  }
+}
+
+document.getElementById("connect-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  clearInterval(timer);
+  stopBtn.hidden = false;
+  poll();
+  timer = setInterval(poll, 2000);
+});
+stopBtn.addEventListener("click", () => {
+  clearInterval(timer);
+  timer = 0;
+  stopBtn.hidden = true;
+  statusEl.textContent = "stopped";
+});
+</script>
+</body>
+</html>

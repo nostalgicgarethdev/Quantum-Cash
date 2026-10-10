@@ -33,7 +33,9 @@ Wallets derive key *i* from a 32-byte seed, so a single backup covers all addres
 ## Honest limitations
 - **Single node.** No P2P networking, no fork choice, no reorgs. It's a devnet you run yourself.
 - **Toy security parameters.** Difficulty is tiny; anyone can rewrite the chain.
-- **W-OTS is one-time.** Reuse protection is enforced by the chain, but a careless wallet copy that signs twice off-chain could still leak a key.
+- **Teaching-grade W-OTS.** The signature code is a compact W-OTS-style construction over SHA-256 in this repository (w=16, 67 chains). It is not RFC 8391 WOTS+, not SPHINCS+ / SLH-DSA, and not ML-DSA. Security is believed to rest on SHA-256 preimage resistance. That is not a formal proof, and these parameters are for the experiment, not a standardized security level.
+- **W-OTS is one-time.** Reuse protection is enforced by the chain, but a careless wallet copy that signs twice off-chain could still leak a key before a spend is published.
+- **JSON identifiers.** Transaction ids and block hashes are SHA-256 over this program's `encoding/json` bytes. They are stable for this Go node. They are not a separately specified binary format, so another language would have to match Go's JSON encoding to agree on ids.
 - **Not audited.** Built quickly as an experiment. Bugs are likely.
 - **Not money.** No token, no sale, no bridge, no CA. If someone sells you "QCASH", it's not this.
 - The name collides with an old, inactive Waves token called "Quantum Cash (QCASH)". This project has no relation to it.

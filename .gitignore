@@ -1,4 +1,9 @@
+# Local devnet chain and unencrypted wallet seeds.
 chain.json
 wallet.json
+alice.json
+bob.json
 *.json.tmp
+
+# Built CLI (`go build -o qcash ./cmd/qcash`).
 /qcash

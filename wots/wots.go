@@ -1,8 +1,11 @@
-// Package wots implements Winternitz one-time signatures (W-OTS, w=16) over SHA-256.
-// Security rests only on SHA-256 preimage resistance, which is believed to hold
-// against quantum computers (Grover gives at most a square-root speedup).
-// Each key MUST sign exactly one message. QuantumCash enforces this by making
-// every address single-use (spent outputs can never be spent again).
+// Package wots implements a compact Winternitz one-time signature (W-OTS, w=16)
+// over SHA-256. It is a teaching construction for this repository, not RFC 8391
+// WOTS+ and not a NIST signature such as SLH-DSA or ML-DSA.
+//
+// Forging a signature is believed to require a SHA-256 preimage. Grover's
+// algorithm gives at most a square-root speedup against that. Each key must
+// sign exactly one message. After an address spends, the chain burns it and
+// rejects any later output that pays it.
 package wots
 
 import (

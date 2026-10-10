@@ -1,5 +1,6 @@
-// Package chain: Bitcoin-style UTXO ledger + Solana-style Proof-of-History clock,
-// with every spend signed by a post-quantum W-OTS key. Native coin: QCASH.
+// Package chain implements a Bitcoin-style UTXO ledger and a small Proof-of-History
+// clock. Every spend is signed with the W-OTS-style keys in package wots.
+// Native coin: QCASH. Experimental testnet. Not money.
 package chain
 
 import (

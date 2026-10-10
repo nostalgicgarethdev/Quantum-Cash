@@ -188,7 +188,11 @@ func wallet(cmd string, args []string) {
 		for _, x := range u {
 			s += x.Value
 		}
-		fmt.Printf("%d.%08d QCASH in %d outputs\n", s/chain.Unit, s%chain.Unit, len(u))
+		label := "outputs"
+		if len(u) == 1 {
+			label = "output"
+		}
+		fmt.Printf("%d.%08d QCASH in %d %s\n", s/chain.Unit, s%chain.Unit, len(u), label)
 	case "send":
 		if len(pos) != 2 {
 			usage()
