@@ -14,4 +14,4 @@ QCASH is an experimental testnet. It is not money. The documents below describe 
 | [../CONTRIBUTING.md](../CONTRIBUTING.md) | How to send a patch |
 | [../SECURITY.md](../SECURITY.md) | How to report a flaw |
 
-The logo is [../assets/logo.svg](../assets/logo.svg). The README banner is [../assets/banner.svg](../assets/banner.svg).
+The site is [https://quantumcash.network](https://quantumcash.network). The logo is [../assets/logo.svg](../assets/logo.svg), the glyph is [../assets/glyph.svg](../assets/glyph.svg), and the README banner is [../assets/banner.svg](../assets/banner.svg).

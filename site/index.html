@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>QuantumCash · $QCash experimental testnet</title>
 <meta name="description" content="QuantumCash is an experimental testnet: a Bitcoin-style UTXO ledger, a small proof-of-history clock, and W-OTS-style signatures. Not money.">
-<meta name="theme-color" content="#07090d">
+<meta name="theme-color" content="#070808">
 <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
 <style>
 :root {
-  --bg: #07090d;
+  --bg: #070808;
   --panel: #10141c;
   --panel-2: #161b26;
   --line: #243044;
   --text: #e7eef8;
   --muted: #93a0b8;
-  --mint: #3ee0a0;
-  --mint-dim: rgba(62, 224, 160, .14);
+  --mint: #14B8A6;
+  --mint-dim: rgba(20, 184, 166, .16);
   --violet: #9b8cff;
   --amber: #ffcc66;
   --amber-bg: #2a220f;
@@ -28,8 +28,8 @@ html { scroll-behavior: smooth; }
 body {
   margin: 0;
   background:
-    radial-gradient(900px 480px at 0% -10%, rgba(155, 140, 255, .16), transparent 55%),
-    radial-gradient(800px 420px at 100% 0%, rgba(62, 224, 160, .10), transparent 50%),
+    radial-gradient(900px 480px at 100% -10%, rgba(20, 184, 166, .16), transparent 52%),
+    radial-gradient(700px 380px at 0% 0%, rgba(20, 184, 166, .07), transparent 46%),
     var(--bg);
   color: var(--text);
   font: 17px/1.55 Inter, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -38,7 +38,7 @@ code, pre, .mono, .kicker, button, input {
   font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 a { color: var(--mint); }
-a:hover { color: #e7fff5; }
+a:hover { color: #99f6e4; }
 .notice {
   position: sticky;
   top: 0;
@@ -69,7 +69,7 @@ h1 { font-size: 52px; line-height: 1.05; margin: 0 0 12px; letter-spacing: -0.03
 h2 { font-size: 22px; margin: 48px 0 12px; letter-spacing: -.01em; }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
 .card {
-  background: linear-gradient(180deg, rgba(155, 140, 255, .05), transparent 40%), var(--panel);
+  background: linear-gradient(180deg, rgba(20, 184, 166, .06), transparent 42%), var(--panel);
   border: 1px solid var(--line);
   border-radius: 14px;
   padding: 16px 16px 14px;
@@ -102,7 +102,7 @@ button, input {
 }
 input { color: var(--text); min-width: min(100%, 280px); }
 button { cursor: pointer; font-weight: 700; }
-button:hover { background: var(--mint); color: #04140e; }
+button:hover { background: var(--mint); color: #04221e; }
 button:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 #poh, #st {
   overflow-wrap: anywhere;
@@ -141,7 +141,7 @@ footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
       <span class="kicker">$QCash · ticker QCASH</span>
       <strong>QuantumCash</strong>
     </div>
-    <a class="src" href="https://github.com/nostalgicgarethdev/Quantum-Cash">github.com/nostalgicgarethdev/Quantum-Cash</a>
+    <a class="src" href="https://quantumcash.network">quantumcash.network</a>
   </header>
 
   <h1>A devnet you can read.</h1>
@@ -203,7 +203,7 @@ MINER=$(./qcash wallet address -w alice.json)
   </ul>
 
   <footer>
-    <p>Code and whitepaper: <a href="https://github.com/nostalgicgarethdev/Quantum-Cash">github.com/nostalgicgarethdev/Quantum-Cash</a> · <a href="../WHITEPAPER.md">WHITEPAPER.md</a> · <a href="../docs/limitations.md">limitations</a></p>
+    <p>Site: <a href="https://quantumcash.network">quantumcash.network</a> · Code: <a href="https://github.com/nostalgicgarethdev/Quantum-Cash">github.com/nostalgicgarethdev/Quantum-Cash</a> · <a href="../WHITEPAPER.md">WHITEPAPER.md</a> · <a href="../docs/limitations.md">limitations</a></p>
     <p>MIT license. Experimental testnet. Not money.</p>
   </footer>
 </div>

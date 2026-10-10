@@ -33,7 +33,7 @@ Keys are one-time. The chain burns an address after a spend is applied. A second
 - Peers, mempool gossip, or a light client
 - Encrypted wallets, hardware wallets, or a seed phrase word list
 - Fees other than the fixed 1,000 quanta the CLI attaches, and the implicit input-minus-output fee
-- A browser wallet. `site/index.html` only displays a node and runs a local hash animation
+- A browser wallet. [quantumcash.network](https://quantumcash.network) (`site/index.html`) only displays a node and runs a local hash animation
 - An audit, a bug bounty, or a public network you can join
 
 ## Name

@@ -1,12 +1,13 @@
 <p align="center">
-  <img src="assets/banner.svg" alt="QuantumCash banner: an orbital Q on a dark field, with the wordmark and an experimental-testnet notice" width="100%">
+  <img src="assets/banner.svg" alt="QuantumCash banner: near-black field, teal currency coin, a ledger built to outlive the quantum computer" width="100%">
 </p>
 
 <p align="center">
+  <a href="https://quantumcash.network"><img src="https://img.shields.io/badge/site-quantumcash.network-14B8A6" alt="quantumcash.network"></a>
   <a href="https://go.dev/"><img src="https://img.shields.io/badge/Go-1.24-00ADD8?logo=go&logoColor=white" alt="Go 1.24"></a>
   <a href="https://github.com/nostalgicgarethdev/Quantum-Cash/actions/workflows/test.yml"><img src="https://github.com/nostalgicgarethdev/Quantum-Cash/actions/workflows/test.yml/badge.svg" alt="CI"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
-  <a href="docs/limitations.md"><img src="https://img.shields.io/badge/network-experimental%20testnet-f59e0b" alt="Experimental testnet"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-14B8A6" alt="MIT license"></a>
+  <a href="docs/limitations.md"><img src="https://img.shields.io/badge/network-experimental%20testnet-14B8A6" alt="Experimental testnet"></a>
 </p>
 
 <p align="center"><strong>A small Go devnet that keeps a Bitcoin-style UTXO ledger, orders transactions with a proof-of-history clock, and signs every spend with hash-based one-time signatures.</strong></p>
@@ -31,7 +32,7 @@ QuantumCash (written **$QCash**, ticker **QCASH**) is a readable chain you run o
   </tr>
   <tr>
     <td width="33%" valign="top"><strong>Bitcoin-style subsidy</strong><br>Block 0 pays 50 QCASH plus fees. The subsidy halves every 210,000 blocks, so the cap is about 21 million QCASH. Integer shifts mean it lands slightly under that.</td>
-    <td width="33%" valign="top"><strong>Local explorer</strong><br><a href="site/index.html"><code>site/index.html</code></a> can hash a demo clock in the browser and can read a node you already started. The page does not mine and does not hold keys.</td>
+    <td width="33%" valign="top"><strong>Local explorer</strong><br><a href="https://quantumcash.network">quantumcash.network</a> can hash a demo clock in the browser and can read a node you already started. The page does not mine and does not hold keys. Source: <a href="site/index.html"><code>site/index.html</code></a>.</td>
     <td width="33%" valign="top"><strong>Short enough to read</strong><br>The consensus rules live in <code>chain/</code> and <code>wots/</code>. The CLI is <code>cmd/qcash</code>. Dependencies are the Go standard library.</td>
   </tr>
 </table>
@@ -135,7 +136,7 @@ BOB=$(./qcash wallet address -w bob.json)
 
 The first balance stays at zero until a block exists. The default slot interval is 2 seconds. `send` talks to `http://localhost:8545` and attaches a fee of 1,000 quanta. Amounts on the command line are QCASH, not quanta. `12.5` is an exact decimal. Other fractions can round because the CLI parses a float.
 
-Open [site/index.html](site/index.html), leave the node URL on `http://localhost:8545`, and press connect. The chain file is `chain.json` in the working directory. Wallet files used above are gitignored. Any other `-w` path is still an unencrypted secret. Do not commit it.
+Open [quantumcash.network](https://quantumcash.network), leave the node URL on `http://localhost:8545`, and press connect. The same page is in this repo at [site/index.html](site/index.html). The chain file is `chain.json` in the working directory. Wallet files used above are gitignored. Any other `-w` path is still an unencrypted secret. Do not commit it.
 
 `go test ./...` covers signing, a spend, double-spend rejection, a tampered transaction, burned-address rejection, a bad PoH hash, an inflated coinbase, reload from disk, and the first halving.
 
@@ -198,7 +199,7 @@ This is a single-process devnet. Read [docs/limitations.md](docs/limitations.md)
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Tests, style, and claims |
 | [SECURITY.md](SECURITY.md) | How to report a real flaw |
 
-Brand files: [assets/logo.svg](assets/logo.svg), [assets/banner.svg](assets/banner.svg).
+Brand files: [assets/logo.svg](assets/logo.svg), [assets/glyph.svg](assets/glyph.svg), [assets/banner.svg](assets/banner.svg). Site: [quantumcash.network](https://quantumcash.network).
 
 ## License
 

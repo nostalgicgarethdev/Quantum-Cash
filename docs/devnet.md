@@ -39,7 +39,7 @@ Stopping the process and starting it again with the same `-data` file replays th
 
 ## Explorer
 
-[../site/index.html](../site/index.html) is a static file.
+The explorer is published at [https://quantumcash.network](https://quantumcash.network). The source is the static file [../site/index.html](../site/index.html).
 
 - "Start clock" hashes 12,500 SHA-256 steps per slot in the browser, with `crypto.subtle.digest`. That animation is not your node and it does not extend `chain.json`.
 - "Connect" polls `GET /stats` and `GET /blocks?n=10` on the URL in the field, every 2 seconds. The default URL is `http://localhost:8545`.
