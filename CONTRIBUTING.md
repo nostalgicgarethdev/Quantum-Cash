@@ -1,6 +1,6 @@
 # Contributing to QuantumCash
 
-QuantumCash is an experimental testnet. QCASH is not money. Patches that keep the code readable and the claims accurate are welcome.
+QuantumCash is experimental, unaudited devnet software. QCASH the node mines has no value and is not the Solana $QCash token. Patches that keep the code readable and the claims accurate are welcome.
 
 ## Build and test
 
@@ -34,7 +34,7 @@ Please leave the node dependency-free unless the standard library cannot do the 
 
 Documentation, the site, and commit messages should describe this repository, not a product it does not ship.
 
-- Call the network an experimental testnet. QCASH has no price, no sale, and no contract address.
+- Call the node an experimental, unaudited devnet. QCASH it mines has no value and is not the Solana $QCash token.
 - Call the signature code a W-OTS-style teaching construction over SHA-256. It is not RFC 8391 WOTS+, SLH-DSA, or ML-DSA.
 - Do not describe the proof-of-history loop as Solana's production clock. It is 12,500 sequential SHA-256 ticks per slot.
 - Do not describe the process as a peer-to-peer network. It is one node.

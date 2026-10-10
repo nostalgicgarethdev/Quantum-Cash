@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>QuantumCash · $QCash experimental testnet</title>
-<meta name="description" content="QuantumCash is an experimental testnet: a Bitcoin-style UTXO ledger, a small proof-of-history clock, and W-OTS-style signatures. Not money.">
+<meta name="description" content="QuantumCash is an experimental, unaudited devnet. Official $QCash is a separate Solana token. Devnet QCASH mined by the node has no value.">
 <meta name="theme-color" content="#070808">
 <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
 <style>
@@ -67,6 +67,8 @@ header.bar .src:hover { color: var(--mint); }
 h1 { font-size: 52px; line-height: 1.05; margin: 0 0 12px; letter-spacing: -0.03em; }
 .lede { font-size: 20px; color: #c5d0e0; max-width: 46rem; margin: 0 0 28px; }
 h2 { font-size: 22px; margin: 48px 0 12px; letter-spacing: -.01em; }
+.token-ca { margin: 8px 0 0; word-break: break-all; color: var(--mint); }
+.token-links { margin: 12px 0 0; }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
 .card {
   background: linear-gradient(180deg, rgba(20, 184, 166, .06), transparent 42%), var(--panel);
@@ -133,7 +135,7 @@ footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 </style>
 </head>
 <body>
-<div class="notice">Experimental testnet. Not money. No sale, no token, no contract address.</div>
+<div class="notice">Devnet QCASH mined by this node has no value and is not the $QCash Solana token. The software is experimental and unaudited.</div>
 <div class="wrap">
   <header class="bar">
     <img src="../assets/logo.svg" width="64" height="64" alt="QuantumCash logo">
@@ -146,6 +148,14 @@ footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 
   <h1>A devnet you can read.</h1>
   <p class="lede">Bitcoin-style UTXOs, a 12,500-tick proof-of-history slot, and a W-OTS-style signature on every spend. One Go process. Nothing here is a public network.</p>
+
+  <h2 id="token">Official token</h2>
+  <p>The official <b>$QCash</b> token is on Solana. It was created on pump.fun by the project wallet. QCASH mined by the node has no value and is not that token. This software is experimental and unaudited.</p>
+  <div class="panel">
+    <p class="muted token-links">Contract</p>
+    <p class="mono token-ca">BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump</p>
+    <p class="token-links"><a href="https://pump.fun/coin/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump">pump.fun</a> · <a href="https://dexscreener.com/solana/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump">DexScreener</a></p>
+  </div>
 
   <div class="grid">
     <article class="card"><b>UTXO ledger</b><p>Coins live in unspent outputs. A spend reveals a 2,144-byte public key and a signature. Inputs must cover outputs.</p></article>
@@ -199,12 +209,12 @@ MINER=$(./qcash wallet address -w alice.json)
     <li>One node. No peers, no fork choice, no reorgs.</li>
     <li>Toy proof-of-work. The devnet default is 16 leading zero bits.</li>
     <li>Teaching-grade signatures, unaudited. A key that signs twice can leak.</li>
-    <li>QCASH has no value. A seller of QCASH is not this project. An old Waves token reused the ticker. This repository is not that token.</li>
+    <li>Devnet QCASH has no value and is not the Solana $QCash token. An old Waves token also used the ticker. This repository is not that Waves token.</li>
   </ul>
 
   <footer>
     <p>Site: <a href="https://quantumcash.network">quantumcash.network</a> · Code: <a href="https://github.com/nostalgicgarethdev/Quantum-Cash">github.com/nostalgicgarethdev/Quantum-Cash</a> · <a href="../WHITEPAPER.md">WHITEPAPER.md</a> · <a href="../docs/limitations.md">limitations</a></p>
-    <p>MIT license. Experimental testnet. Not money.</p>
+    <p>MIT license. Experimental and unaudited. Devnet QCASH is not the Solana token.</p>
   </footer>
 </div>
 <script>

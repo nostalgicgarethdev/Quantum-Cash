@@ -1,6 +1,6 @@
 # QuantumCash docs
 
-QCASH is an experimental testnet. It is not money. The documents below describe the code in this repository at version 0.1.
+The node is experimental and unaudited. QCASH it mines has no value and is not the Solana $QCash token. The documents below describe the code in this repository at version 0.1.
 
 | Document | What it is for |
 | --- | --- |

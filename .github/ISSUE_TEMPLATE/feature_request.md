@@ -14,4 +14,4 @@ What is hard to understand or hard to do with the node as it is?
 
 This repository is a readable experiment. A feature that needs a peer-to-peer network, a token sale, or a claim of standardized post-quantum security needs a design note, not a drive-by patch.
 
-- [ ] I am not asking to treat QCASH as money, a sale, or a bridge.
+- [ ] I am not asking to treat devnet QCASH as the Solana token, or to describe the node as audited.

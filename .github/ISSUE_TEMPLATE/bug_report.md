@@ -21,4 +21,4 @@ Include the commit (`git rev-parse --short HEAD`), the command, and the error te
 
 ## Reminder
 
-QCASH is an experimental testnet and is not money. Signature and consensus breaks belong in a [private advisory](https://github.com/nostalgicgarethdev/Quantum-Cash/security/advisories/new), described in SECURITY.md.
+Devnet QCASH is not the Solana token. The node is experimental and unaudited. Signature and consensus breaks belong in a [private advisory](https://github.com/nostalgicgarethdev/Quantum-Cash/security/advisories/new), described in SECURITY.md.

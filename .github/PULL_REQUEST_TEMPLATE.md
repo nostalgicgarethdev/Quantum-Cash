@@ -7,4 +7,4 @@
 
 ## Honesty check
 
-- [ ] Docs still match the code. QCASH stays an experimental testnet, not money. The signature code is not described as a NIST standard or as RFC 8391 WOTS+.
+- [ ] Docs still match the code. Devnet QCASH is not described as the Solana token. The software stays experimental and unaudited. The signature code is not described as a NIST standard or as RFC 8391 WOTS+.

@@ -1,6 +1,16 @@
 # QuantumCash: a post-quantum UTXO chain with a Proof-of-History clock
 
-*Experimental testnet. Not money. Not audited. Version 0.1 (October 2026).*
+*Version 0.1 (October 2026). The node is experimental and unaudited. Devnet QCASH is not the Solana $QCash token.*
+
+## Official token
+
+The official **$QCash** token is on Solana. It was created on pump.fun by the project wallet.
+
+- Contract: `BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump`
+- [pump.fun](https://pump.fun/coin/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump)
+- [DexScreener](https://dexscreener.com/solana/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump)
+
+QCASH mined by the node in this repository has no value. It is not that Solana token, and this software does not issue or redeem that mint. The node is experimental and has not been audited.
 
 ## 1. Why
 Bitcoin and Solana both sign transactions with elliptic curves (secp256k1, Ed25519). A large enough quantum computer running Shor's algorithm could forge those signatures. Hash functions are much less exposed: Grover's algorithm only gives a square-root speedup. QuantumCash asks: what does a simple coin look like if **every** spend is signed with hash-based crypto only?
@@ -37,5 +47,5 @@ Wallets derive key *i* from a 32-byte seed, so a single backup covers all addres
 - **W-OTS is one-time.** Reuse protection is enforced by the chain, but a careless wallet copy that signs twice off-chain could still leak a key before a spend is published.
 - **JSON identifiers.** Transaction ids and block hashes are SHA-256 over this program's `encoding/json` bytes. They are stable for this Go node. They are not a separately specified binary format, so another language would have to match Go's JSON encoding to agree on ids.
 - **Not audited.** Built quickly as an experiment. Bugs are likely.
-- **Not money.** No token, no sale, no bridge, no CA. If someone sells you "QCASH", it's not this.
-- The name collides with an old, inactive Waves token called "Quantum Cash (QCASH)". This project has no relation to it.
+- **Devnet coins.** Balances this node creates have no value. They are not the Solana $QCash token and are not a claim on it.
+- The name collides with an old, inactive Waves token called "Quantum Cash (QCASH)". This project has no relation to that Waves token. The Solana mint in [Official token](#official-token) is the project's token.

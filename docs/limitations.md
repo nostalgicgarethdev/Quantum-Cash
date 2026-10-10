@@ -1,6 +1,6 @@
 # Limitations
 
-**Experimental testnet. Not money.** QCASH has no price, no sale, no bridge, and no contract address. The software is an experiment you run yourself. If someone sells you QCASH, they are not selling an asset this repository creates.
+**Experimental and unaudited.** QCASH mined by this node has no value. It is not the official Solana $QCash token (`BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump` on [pump.fun](https://pump.fun/coin/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump) and [DexScreener](https://dexscreener.com/solana/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump)), and the node does not issue or redeem that mint.
 
 Version 0.1, October 2026. Not audited.
 

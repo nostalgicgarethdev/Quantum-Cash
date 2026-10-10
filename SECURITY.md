@@ -1,6 +1,6 @@
 # Security policy
 
-QuantumCash is an experimental testnet. QCASH has no value. The code has not been audited. Please still report flaws that would let a transaction break the rules this repository claims to enforce.
+QuantumCash is experimental devnet software and has not been audited. QCASH the node mines has no value and is not the Solana $QCash token. Please still report flaws that would let a transaction break the rules this repository claims to enforce.
 
 ## Report a flaw
 
