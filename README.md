@@ -149,7 +149,7 @@ The first balance stays at zero until a block exists. The default slot interval 
 
 Open [quantumcash.network](https://quantumcash.network), leave the node URL on `http://localhost:8545`, and press connect. The same page is in this repo at [site/index.html](site/index.html). The chain file is `chain.json` in the working directory. Wallet files used above are gitignored. Any other `-w` path is still an unencrypted secret. Do not commit it.
 
-`go test ./...` covers signing, a spend, double-spend rejection, a tampered transaction, burned-address rejection, a bad PoH hash, an inflated coinbase, reload from disk, and the first halving.
+`go test ./...` covers multi-node gossip, sync, reorgs and peer bans (package `p2p`), plus signing, a spend, double-spend rejection, a tampered transaction, burned-address rejection, a bad PoH hash, an inflated coinbase, reload from disk, and the first halving.
 
 ## Terminal demo
 
@@ -169,27 +169,40 @@ If `wallet send` fails after it has signed, do not build a second transaction th
 
 | Method | Path | Role |
 | --- | --- | --- |
-| `GET` | `/stats` | Height, tip, supply in quanta, UTXO count, mempool size, bits, PoH tick counter |
+| `GET` | `/stats` | Height, tip, supply in quanta, UTXO count, mempool size, bits, PoH tick counter, cumulative work |
+| `GET` | `/peers` | Connected peers: address, direction, height, work, misbehavior score |
 | `GET` | `/blocks?n=20` | Newest blocks first. `n` is clamped to 1..100 |
 | `GET` | `/utxos?addr=HEX` | UTXOs for the given addresses. Repeat `addr` for more than one |
 | `POST` | `/tx` | Submit a transaction JSON. Returns `{"txid":"..."}` or `{"error":"..."}` |
 
 There is no authentication, and CORS allows any origin. Request and response bodies are JSON. Supply and values are integers in quanta. Curl examples are in [docs/http-api.md](docs/http-api.md).
 
+## Run a network (v0.2)
+
+Since v0.2 every node joins a peer-to-peer network over TCP. It handshakes, swaps peer addresses, gossips transactions and blocks, syncs from peers, and follows the valid chain with the most work, reorganizing when a heavier branch shows up. You can run three nodes on one machine like this:
+
+```bash
+./qcash node -data n1.json -addr 127.0.0.1:8545 -listen :7001 -miner "$MINER"
+./qcash node -data n2.json -addr 127.0.0.1:8546 -listen :7002 -peers 127.0.0.1:7001 -mine=false
+./qcash node -data n3.json -addr 127.0.0.1:8547 -listen :7003 -peers 127.0.0.1:7002 -mine=false
+curl -s localhost:8547/peers
+```
+
+Wire format, fork choice, and ban rules are in [docs/p2p.md](docs/p2p.md).
+
 ## Roadmap
 
-These are directions worth exploring. They are not scheduled work, and they are not promises.
-
-- Reusable hash-based or lattice signatures (XMSS, SLH-DSA, or ML-DSA) so an address can spend more than once
-- Peer-to-peer gossip and a heaviest-chain fork choice
-- A difficulty adjustment and a slot leader schedule
+- **v0.1 devnet: shipped.** UTXO ledger, PoW, PoH slots, one-time W-OTS signatures, CLI wallet
+- **v0.2 peer-to-peer network: shipped.** Handshake, peer discovery, tx and block gossip, initial sync, most-work fork choice with reorgs, misbehavior bans
+- **v0.3 (planned):** reusable hash-based or lattice signatures (XMSS, SLH-DSA, or ML-DSA) so an address can spend more than once
+- Later: a difficulty adjustment and a slot leader schedule
 - Verifying the proof-of-history chain with more than one core
 
 ## Limitations
 
-This is a single-process devnet. Read [docs/limitations.md](docs/limitations.md) and [WHITEPAPER.md](WHITEPAPER.md) before you treat any behavior as a guarantee.
+This is an experimental devnet. Read [docs/limitations.md](docs/limitations.md) and [WHITEPAPER.md](WHITEPAPER.md) before you treat any behavior as a guarantee.
 
-- No peer-to-peer network, no fork choice, and no reorg handling. One process extends its own tip.
+- The p2p layer (v0.2) is unauthenticated, unencrypted TCP with no NAT traversal and no public seed nodes. A reorg replays the chain from genesis, which is fine for a devnet but not for a long chain.
 - Devnet proof-of-work is 16 bits by default. Anyone who can reach the process can outwork it. Tests use 8 bits.
 - Devnet QCASH mined by the node has no value and is separate from the Solana $QCash token. The software is experimental and has not been audited.
 - The signature code is a teaching W-OTS. It is not a standardized parameter set.

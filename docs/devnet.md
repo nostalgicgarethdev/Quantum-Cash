@@ -1,17 +1,20 @@
 # Devnet
 
-One `qcash node` process is the whole network. It mines on a timer, stores blocks in a JSON file, and serves the HTTP API in [http-api.md](http-api.md).
+A `qcash node` process mines on a timer, talks to peers over TCP (see [p2p.md](p2p.md)), stores blocks in a JSON file, and serves the HTTP API in [http-api.md](http-api.md).
 
 ## Flags
 
 ```text
-qcash node [-data chain.json] [-addr :8545] [-miner ADDRESS] [-bits 16] [-interval 2s]
+qcash node [-data chain.json] [-addr :8545] [-listen :7001] [-peers host:port,...] [-mine=true] [-miner ADDRESS] [-bits 16] [-interval 2s]
 ```
 
 | Flag | Default | Meaning |
 | --- | --- | --- |
 | `-data` | `chain.json` | Block log. Rewritten via `chain.json.tmp` and renamed into place |
 | `-addr` | `:8545` | Listen address. `:8545` is every interface. Use `127.0.0.1:8545` unless you mean to share it |
+| `-listen` | `:7001` | P2P listen address. Empty means outbound connections only |
+| `-peers` | empty | Comma-separated bootstrap peers (`host:port`) |
+| `-mine` | `true` | Produce blocks. `-mine=false` gives a relay and sync node. Mining pauses while a peer reports more work |
 | `-miner` | empty | Hex address that receives the subsidy. Empty pays the all-zero address |
 | `-bits` | `16` | Leading zero bits required in the block hash |
 | `-interval` | `2s` | Sleep between `Produce` calls. The PoH clock is the hash chain, not this timer |

@@ -2,11 +2,19 @@
 
 **Experimental and unaudited.** QCASH mined by this node has no value. It is not the official Solana $QCash token (`BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump` on [pump.fun](https://pump.fun/coin/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump) and [DexScreener](https://dexscreener.com/solana/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump)), and the node does not issue or redeem that mint.
 
-Version 0.1, October 2026. Not audited.
+Version 0.2, October 2026. Not audited.
 
 ## Network
 
-There is one process. It does not gossip, it does not learn about another tip, and it does not reorganize. "The chain" is the file that process writes. Two processes with different files are two unrelated devnets, even if both say QCASH.
+Since v0.2, nodes connect over TCP (`-listen`, `-peers`), gossip transactions and blocks, sync, and follow the valid chain with the most cumulative work, reorganizing when needed. See [p2p.md](p2p.md). What it still lacks:
+
+- No public seed nodes or DNS seeds. You give a node its peers.
+- No encryption or peer authentication. Traffic is plaintext JSON over TCP, and anyone on the path can read or drop it.
+- No NAT traversal. A node behind a router needs a forwarded port to accept inbound peers.
+- A reorg replays every block from genesis without re-checking signatures, then fully validates the new branch. The cost grows with chain length.
+- Blocks relay in full (no compact blocks or inventory announcements), and sync is one peer at a time in batches of 50.
+- Fork choice uses fixed difficulty, so cumulative work is just the block count times `2^bits`. With 16-bit devnet difficulty, one laptop can out-mine a small network and rewrite it.
+- No eclipse or Sybil resistance beyond the connection caps (32 inbound, 8 outbound, 4 for each IP) and misbehavior bans.
 
 The HTTP API has no authentication. CORS reflects a wildcard. The default listen address is every interface on port 8545.
 
@@ -14,7 +22,7 @@ The HTTP API has no authentication. CORS reflects a wildcard. The default listen
 
 Proof-of-work defaults to 16 leading zero bits. That stops accidental garbage. It does not stop a laptop from rewriting a devnet. Tests use 8 bits. There is no retarget.
 
-The header timestamp is not validated. The stored PoH tick counter is not checked against the slot. The thing that is checked is the recomputed SHA-256 chain described in [protocol.md](protocol.md).
+The header timestamp is only checked to be no more than 2 hours in the future. The stored PoH tick counter must equal `(slot+1) * 12500`. A block may skip at most 64 empty slots. The thing that is checked is the recomputed SHA-256 chain described in [protocol.md](protocol.md).
 
 Transaction ids and block hashes are SHA-256 of Go's `encoding/json` bytes. They are stable for this program. They are not a separately specified binary codec.
 
@@ -30,7 +38,7 @@ Keys are one-time. The chain burns an address after a spend is applied. A second
 
 ## What the repo does not include
 
-- Peers, mempool gossip, or a light client
+- A light client, compact blocks, or encrypted transport
 - Encrypted wallets, hardware wallets, or a seed phrase word list
 - Fees other than the fixed 1,000 quanta the CLI attaches, and the implicit input-minus-output fee
 - A browser wallet. [quantumcash.network](https://quantumcash.network) (`site/index.html`) only displays a node and runs a local hash animation

@@ -11,15 +11,18 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/nostalgicgarethdev/Quantum-Cash/chain"
+	"github.com/nostalgicgarethdev/Quantum-Cash/p2p"
 )
 
 func usage() {
 	fmt.Print(`qcash — QuantumCash ($QCash, ticker QCASH) experimental devnet
 
-  qcash node   [-data chain.json] [-addr :8545] [-miner ADDRESS] [-bits 16] [-interval 2s]
+  qcash node   [-data chain.json] [-addr :8545] [-listen :7001] [-peers host:port,...]
+               [-mine=true] [-miner ADDRESS] [-bits 16] [-interval 2s]
   qcash wallet new      [-w wallet.json]
   qcash wallet address  [-w wallet.json]
   qcash wallet balance  [-w wallet.json] [-node http://localhost:8545]
@@ -52,6 +55,9 @@ func node(args []string) {
 	miner := fs.String("miner", "", "reward address (hex); empty = burn address")
 	bits := fs.Uint("bits", chain.DefaultBits, "PoW difficulty bits")
 	iv := fs.Duration("interval", 2*time.Second, "slot interval")
+	listen := fs.String("listen", ":7001", "p2p listen address (empty = outbound only)")
+	peers := fs.String("peers", "", "comma-separated bootstrap peers host:port")
+	mine := fs.Bool("mine", true, "produce blocks (use -mine=false for a relay/sync-only node)")
 	fs.Parse(args)
 	c, err := chain.New(*data, uint8(*bits))
 	if err != nil {
@@ -63,8 +69,31 @@ func node(args []string) {
 			log.Fatal("bad miner address")
 		}
 	}
+	var boot []string
+	for _, p := range strings.Split(*peers, ",") {
+		if p = strings.TrimSpace(p); p != "" {
+			boot = append(boot, p)
+		}
+	}
+	pn := p2p.New(p2p.Config{Chain: c, Listen: *listen, Peers: boot, Logger: log.Default()})
+	if err := pn.Start(); err != nil {
+		log.Fatal("p2p: ", err)
+	}
+	if *listen != "" {
+		log.Printf("p2p listening on %s, %d bootstrap peer(s)", pn.Addr(), len(boot))
+	}
 	go func() {
+		if !*mine {
+			return
+		}
+		if len(boot) > 0 {
+			time.Sleep(3 * time.Second) // give the first handshake a chance to start a sync
+		}
 		for {
+			if pn.Syncing() {
+				time.Sleep(500 * time.Millisecond)
+				continue
+			}
 			if m != (chain.Hash{}) && c.IsUsed(m) {
 				log.Println("miner address already signed a spend; rewards now go to the burn address. Restart with a fresh -miner address.")
 				m = chain.Hash{}
@@ -73,6 +102,7 @@ func node(args []string) {
 			if err != nil {
 				log.Println("produce:", err)
 			} else {
+				pn.AnnounceBlock(b)
 				log.Printf("%s block %d slot %d txs %d hash %s", chain.Ticker, b.Header.Height, b.Header.Slot, len(b.Txs), b.Header.Hash().String()[:16])
 			}
 			time.Sleep(*iv)
@@ -103,13 +133,14 @@ func node(args []string) {
 		}
 		js(w, c.UTXOsFor(set))
 	}))
+	http.HandleFunc("/peers", cors(func(w http.ResponseWriter, r *http.Request) { js(w, pn.Peers()) }))
 	http.HandleFunc("/tx", cors(func(w http.ResponseWriter, r *http.Request) {
 		var t chain.Tx
 		if err := json.NewDecoder(r.Body).Decode(&t); err != nil {
 			http.Error(w, `{"error":"bad json"}`, 400)
 			return
 		}
-		id, err := c.SubmitTx(t)
+		id, err := pn.SubmitTx(t)
 		if err != nil {
 			w.WriteHeader(400)
 			js(w, map[string]string{"error": err.Error()})

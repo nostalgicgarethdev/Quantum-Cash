@@ -15,3 +15,4 @@ The node is experimental and unaudited. QCASH it mines has no value and is not t
 | [../SECURITY.md](../SECURITY.md) | How to report a flaw |
 
 The site is [https://quantumcash.network](https://quantumcash.network). The logo is [../assets/logo.svg](../assets/logo.svg), the glyph is [../assets/glyph.svg](../assets/glyph.svg), and the README banner is [../assets/banner.svg](../assets/banner.svg).
+- [p2p.md](p2p.md): peer-to-peer network, sync, fork choice, bans (v0.2)

@@ -184,12 +184,17 @@ type Chain struct {
 	Mempool []Tx
 	Bits    uint8
 	path    string
+
+	index   map[Hash]uint64 // main-chain block hash -> height
+	work    uint64          // cumulative proof of work of the main chain
+	side    map[Hash]Block  // valid-looking blocks off the main chain (fork candidates)
+	trusted bool            // replaying blocks this node already fully validated
 }
 
 var GenesisPoH = sha([]byte("QuantumCash genesis — experimental testnet, not money"))
 
 func New(path string, bitsDiff uint8) (*Chain, error) {
-	c := &Chain{utxo: map[OutPoint]TxOut{}, used: map[Hash]bool{}, Bits: bitsDiff, path: path}
+	c := newState(path, bitsDiff)
 	if path != "" {
 		if b, err := os.ReadFile(path); err == nil {
 			var blocks []Block
@@ -204,6 +209,11 @@ func New(path string, bitsDiff uint8) (*Chain, error) {
 		}
 	}
 	return c, nil
+}
+
+func newState(path string, bitsDiff uint8) *Chain {
+	return &Chain{utxo: map[OutPoint]TxOut{}, used: map[Hash]bool{}, Bits: bitsDiff, path: path,
+		index: map[Hash]uint64{}, side: map[Hash]Block{}}
 }
 
 func (c *Chain) tip() (Hash, Hash, uint64, uint64) {
@@ -239,7 +249,7 @@ func (c *Chain) checkTx(t *Tx, spent map[OutPoint]bool, usedNow map[Hash]Hash) (
 		if err != nil {
 			return 0, err
 		}
-		if !wots.Verify(pk, sh, sg) {
+		if !c.trusted && !wots.Verify(pk, sh, sg) {
 			return 0, errors.New("bad post-quantum signature")
 		}
 		if prevSH, ok := usedNow[o.Address]; c.used[o.Address] || (ok && prevSH != sh) {
@@ -270,22 +280,21 @@ func (c *Chain) apply(b Block) error {
 	if h.Height != height || h.Prev != prev || h.Slot < slot {
 		return errors.New("does not extend tip")
 	}
-	if h.Bits != c.Bits && len(c.Blocks) > 0 {
-		return errors.New("wrong difficulty")
+	if err := c.checkHeader(&b); err != nil {
+		return err
 	}
-	if leadingZeros(h.Hash()) < int(h.Bits) {
-		return errors.New("insufficient proof of work")
+	if h.Slot-slot > MaxSlotGap {
+		return errors.New("slot gap too large")
 	}
-	if Merkle(b.Txs) != h.MerkleRoot {
-		return errors.New("bad merkle root")
-	}
-	// PoH must be continuous: one segment per slot, empty slots tick with no txs.
-	x := poh
-	for s := slot; s < h.Slot; s++ {
-		x = PoHRun(x, nil)
-	}
-	if PoHRun(x, b.Txs) != h.PoH {
-		return errors.New("bad proof of history")
+	if !c.trusted {
+		// PoH must be continuous: one segment per slot, empty slots tick with no txs.
+		x := poh
+		for s := slot; s < h.Slot; s++ {
+			x = PoHRun(x, nil)
+		}
+		if PoHRun(x, b.Txs) != h.PoH {
+			return errors.New("bad proof of history")
+		}
 	}
 	if len(b.Txs) == 0 || !b.Txs[0].IsCoinbase() {
 		return errors.New("first tx must be coinbase")
@@ -323,6 +332,8 @@ func (c *Chain) apply(b Block) error {
 		}
 	}
 	c.Blocks = append(c.Blocks, b)
+	c.index[h.Hash()] = h.Height
+	c.work += BlockWork(h.Bits)
 	if c.Bits == 0 {
 		c.Bits = h.Bits
 	}
@@ -425,6 +436,7 @@ type Stats struct {
 	Mempool  int    `json:"mempool"`
 	Bits     uint8  `json:"bits"`
 	PoHTicks uint64 `json:"poh_ticks"`
+	Work     uint64 `json:"work"`
 }
 
 func (c *Chain) Stats() Stats {
@@ -434,7 +446,7 @@ func (c *Chain) Stats() Stats {
 	for _, o := range c.utxo {
 		sup += o.Value
 	}
-	s := Stats{Ticker: Ticker, Supply: sup, UTXOs: len(c.utxo), Mempool: len(c.Mempool), Bits: c.Bits}
+	s := Stats{Ticker: Ticker, Supply: sup, UTXOs: len(c.utxo), Mempool: len(c.Mempool), Bits: c.Bits, Work: c.work}
 	if n := len(c.Blocks); n > 0 {
 		h := c.Blocks[n-1].Header
 		s.Height, s.Tip, s.PoHTicks = h.Height, h.Hash().String(), h.PoHTicks

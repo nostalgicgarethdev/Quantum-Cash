@@ -39,12 +39,12 @@ Wallets derive key *i* from a 32-byte seed, so a single backup covers all addres
 
 ## 5. Roadmap ideas
 - XMSS / SPHINCS+ (SLH-DSA) or ML-DSA (Dilithium) for reusable post-quantum addresses
-- P2P gossip + heaviest-chain fork choice
+- ~~P2P gossip + heaviest-chain fork choice~~: shipped in v0.2 (see docs/p2p.md)
 - Difficulty retargeting, leader schedule per slot
 - Parallel PoH verification
 
 ## Honest limitations
-- **Single node.** No P2P networking, no fork choice, no reorgs. It's a devnet you run yourself.
+- **Small network.** v0.2 adds TCP gossip, sync and most-work fork choice with reorgs, but there are no public seed nodes, no encryption or peer authentication, and no NAT traversal. A reorg rebuilds state from genesis. It's a devnet you run yourself or with friends.
 - **Toy security parameters.** Difficulty is tiny; anyone can rewrite the chain.
 - **Teaching-grade W-OTS.** The signature code is a compact W-OTS-style construction over SHA-256 in this repository (w=16, 67 chains). It is not RFC 8391 WOTS+, not SPHINCS+ / SLH-DSA, and not ML-DSA. Security is believed to rest on SHA-256 preimage resistance. That is not a formal proof, and these parameters are for the experiment, not a standardized security level.
 - **W-OTS is one-time.** Reuse protection is enforced by the chain, but a careless wallet copy that signs twice off-chain could still leak a key before a spend is published.
