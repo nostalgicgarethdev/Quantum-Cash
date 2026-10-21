@@ -17,7 +17,7 @@
 The official **$QCash** token is on Solana. It was created on pump.fun by the project wallet.
 
 ```
-BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump
+6bxBZwvU4gMWKFMViGAnHSsdJChixyCUwV1VB8wnpump
 ```
 
 - [pump.fun](https://pump.fun/coin/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump)
