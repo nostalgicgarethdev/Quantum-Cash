@@ -1,0 +1,22 @@
+[Unit]
+Description=QuantumCash testnet seed node (experimental, not money)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=qcash
+Group=qcash
+WorkingDirectory=/var/lib/qcash
+EnvironmentFile=-/etc/default/qcash
+ExecStart=/usr/local/bin/qcash node -network testnet -data /var/lib/qcash/testnet-chain.json -addr 127.0.0.1:8645 -readonly $QCASH_ARGS
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/qcash
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

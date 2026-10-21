@@ -190,10 +190,19 @@ curl -s localhost:8547/peers
 
 Wire format, fork choice, and ban rules are in [docs/p2p.md](docs/p2p.md).
 
+## Join the testnet
+
+```sh
+go install github.com/nostalgicgarethdev/Quantum-Cash/cmd/qcash@latest && qcash node -network testnet
+```
+
+Public seed nodes are launching soon; until then pass `-seeds host:7101`. Details in [docs/testnet.md](docs/testnet.md).
+
 ## Roadmap
 
 - **v0.1 devnet: shipped.** UTXO ledger, PoW, PoH slots, one-time W-OTS signatures, CLI wallet
 - **v0.2 peer-to-peer network: shipped.** Handshake, peer discovery, tx and block gossip, initial sync, most-work fork choice with reorgs, misbehavior bans
+- **Public testnet: ready, seeds launching soon.** Separate testnet genesis, `qcash node -network testnet`, Docker and systemd seed deploys, read-only explorer API. See [docs/testnet.md](docs/testnet.md)
 - **v0.3 (planned):** reusable hash-based or lattice signatures (XMSS, SLH-DSA, or ML-DSA) so an address can spend more than once
 - Later: a difficulty adjustment and a slot leader schedule
 - Verifying the proof-of-history chain with more than one core

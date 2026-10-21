@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -21,7 +22,8 @@ import (
 func usage() {
 	fmt.Print(`qcash — QuantumCash ($QCash, ticker QCASH) experimental devnet
 
-  qcash node   [-data chain.json] [-addr :8545] [-listen :7001] [-peers host:port,...]
+  qcash node   [-network devnet|testnet] [-seeds default|none|host:port,...] [-readonly]
+               [-data chain.json] [-addr :8545] [-listen :7001] [-peers host:port,...]
                [-mine=true] [-miner ADDRESS] [-bits 16] [-interval 2s]
   qcash wallet new      [-w wallet.json]
   qcash wallet address  [-w wallet.json]
@@ -50,6 +52,9 @@ func main() {
 
 func node(args []string) {
 	fs := flag.NewFlagSet("node", flag.ExitOnError)
+	network := fs.String("network", "devnet", "network: devnet or testnet")
+	seeds := fs.String("seeds", "default", "seed peers: 'default' (built-in list for the network), 'none', or host:port,...")
+	readonly := fs.Bool("readonly", false, "public explorer mode: disable POST /tx")
 	data := fs.String("data", "chain.json", "chain file")
 	addr := fs.String("addr", ":8545", "http listen")
 	miner := fs.String("miner", "", "reward address (hex); empty = burn address")
@@ -58,7 +63,28 @@ func node(args []string) {
 	listen := fs.String("listen", ":7001", "p2p listen address (empty = outbound only)")
 	peers := fs.String("peers", "", "comma-separated bootstrap peers host:port")
 	mine := fs.Bool("mine", true, "produce blocks (use -mine=false for a relay/sync-only node)")
+	pre := flag.NewFlagSet("", flag.ContinueOnError)
+	pre.SetOutput(io.Discard)
+	pnet := pre.String("network", "devnet", "")
+	for i, a := range args { // pick the network first so its port/bit defaults apply
+		if strings.HasPrefix(a, "-network=") || strings.HasPrefix(a, "--network=") {
+			*pnet = a[strings.Index(a, "=")+1:]
+		} else if (a == "-network" || a == "--network") && i+1 < len(args) {
+			*pnet = args[i+1]
+		}
+	}
+	net, err := chain.UseNetwork(*pnet)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if net.Name != "devnet" {
+		*data = net.Name + "-chain.json"
+		*addr = fmt.Sprintf(":%d", net.HTTPPort)
+		*listen = fmt.Sprintf(":%d", net.P2PPort)
+		*bits = uint(net.Bits)
+	}
 	fs.Parse(args)
+	_ = network
 	c, err := chain.New(*data, uint8(*bits))
 	if err != nil {
 		log.Fatal(err)
@@ -70,7 +96,17 @@ func node(args []string) {
 		}
 	}
 	var boot []string
-	for _, p := range strings.Split(*peers, ",") {
+	list := *peers
+	switch *seeds {
+	case "default":
+		if len(net.Seeds) > 0 {
+			list += "," + strings.Join(net.Seeds, ",")
+		}
+	case "none", "":
+	default:
+		list += "," + *seeds
+	}
+	for _, p := range strings.Split(list, ",") {
 		if p = strings.TrimSpace(p); p != "" {
 			boot = append(boot, p)
 		}
@@ -108,48 +144,10 @@ func node(args []string) {
 			time.Sleep(*iv)
 		}
 	}()
-	cors := func(f http.HandlerFunc) http.HandlerFunc {
-		return func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Access-Control-Allow-Origin", "*")
-			w.Header().Set("Content-Type", "application/json")
-			f(w, r)
-		}
-	}
-	js := func(w http.ResponseWriter, v any) { json.NewEncoder(w).Encode(v) }
-	http.HandleFunc("/stats", cors(func(w http.ResponseWriter, r *http.Request) { js(w, c.Stats()) }))
-	http.HandleFunc("/blocks", cors(func(w http.ResponseWriter, r *http.Request) {
-		n, _ := strconv.Atoi(r.URL.Query().Get("n"))
-		if n <= 0 || n > 100 {
-			n = 20
-		}
-		js(w, c.Recent(n))
-	}))
-	http.HandleFunc("/utxos", cors(func(w http.ResponseWriter, r *http.Request) {
-		set := map[chain.Hash]bool{}
-		for _, a := range r.URL.Query()["addr"] {
-			if h, err := chain.ParseHash(a); err == nil {
-				set[h] = true
-			}
-		}
-		js(w, c.UTXOsFor(set))
-	}))
-	http.HandleFunc("/peers", cors(func(w http.ResponseWriter, r *http.Request) { js(w, pn.Peers()) }))
-	http.HandleFunc("/tx", cors(func(w http.ResponseWriter, r *http.Request) {
-		var t chain.Tx
-		if err := json.NewDecoder(r.Body).Decode(&t); err != nil {
-			http.Error(w, `{"error":"bad json"}`, 400)
-			return
-		}
-		id, err := pn.SubmitTx(t)
-		if err != nil {
-			w.WriteHeader(400)
-			js(w, map[string]string{"error": err.Error()})
-			return
-		}
-		js(w, map[string]string{"txid": id.String()})
-	}))
-	log.Printf("QuantumCash devnet node on %s — experimental testnet, not money", *addr)
-	log.Fatal(http.ListenAndServe(*addr, nil))
+	h := newAPI(c, pn, *readonly)
+	log.Printf("QuantumCash %s node, API on %s — experimental testnet, not money", net.Name, *addr)
+	srv := &http.Server{Addr: *addr, Handler: h, ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 10 * time.Second, WriteTimeout: 15 * time.Second}
+	log.Fatal(srv.ListenAndServe())
 }
 
 func load(p string) *chain.Wallet {

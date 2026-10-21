@@ -1,0 +1,28 @@
+# Three testnet seed nodes on one machine (for local testing or a single VPS).
+# seed1 mines; seed2/seed3 relay and serve the read-only explorer API.
+#   docker compose up -d --build
+services:
+  seed1:
+    build: .
+    command: ["-data", "/data/testnet-chain.json", "-seeds", "none", "-readonly"]
+    ports: ["7101:7101", "127.0.0.1:8645:8645"]
+    volumes: ["seed1:/data"]
+    restart: unless-stopped
+  seed2:
+    build: .
+    command: ["-data", "/data/testnet-chain.json", "-seeds", "seed1:7101", "-mine=false", "-readonly"]
+    ports: ["7102:7101", "127.0.0.1:8646:8645"]
+    volumes: ["seed2:/data"]
+    depends_on: [seed1]
+    restart: unless-stopped
+  seed3:
+    build: .
+    command: ["-data", "/data/testnet-chain.json", "-seeds", "seed1:7101,seed2:7101", "-mine=false", "-readonly"]
+    ports: ["7103:7101", "127.0.0.1:8647:8645"]
+    volumes: ["seed3:/data"]
+    depends_on: [seed1, seed2]
+    restart: unless-stopped
+volumes:
+  seed1: {}
+  seed2: {}
+  seed3: {}

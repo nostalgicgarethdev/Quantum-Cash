@@ -1,0 +1,5 @@
+# HTTPS for the explorer API. Point an A record (e.g. seed1.quantumcash.network)
+# at the server, then Caddy fetches a Let's Encrypt cert automatically.
+{$QCASH_API_HOST} {
+	reverse_proxy 127.0.0.1:8645
+}
