@@ -17,11 +17,11 @@
 The official **$QCash** token is on Solana. It was created on pump.fun by the project wallet.
 
 ```
-6bxBZwvU4gMWKFMViGAnHSsdJChixyCUwV1VB8wnpump
+718SRA4xk8TLpqA3Jbt8s4aNrtdAFvdQGoGrjyvtpump
 ```
 
-- [pump.fun](https://pump.fun/coin/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump)
-- [DexScreener](https://dexscreener.com/solana/BCmx2ez4LEBDcuotHY8dx3vs2QnzKxsBSXkULTaUpump)
+- [pump.fun](https://pump.fun/coin/718SRA4xk8TLpqA3Jbt8s4aNrtdAFvdQGoGrjyvtpump)
+- [DexScreener](https://dexscreener.com/solana/718SRA4xk8TLpqA3Jbt8s4aNrtdAFvdQGoGrjyvtpump)
 
 QCASH mined by `qcash node` has no value and is separate from the $QCash Solana token. The node does not issue, bridge, or redeem that mint. The software is experimental and has not been audited.
 
